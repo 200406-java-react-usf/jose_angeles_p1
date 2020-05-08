@@ -10,7 +10,7 @@ phases:
       # - npm run test
   build:
     commands:
-      # - npm run build
+      - npm run build
   post_build:
     commands:
       - echo Build completed on `date`
