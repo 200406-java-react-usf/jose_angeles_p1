@@ -1,12 +1,13 @@
 {
   "name": "jose_angeles_p1-API",
   "version": "1.0.0",
-  "description": "",
+  "description": "Project 1 for revature",
   "main": "index.js",
   "scripts": {
     "start": "tsc && node ./build/index.js",
     "test": "jest --watch --no-cache",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
