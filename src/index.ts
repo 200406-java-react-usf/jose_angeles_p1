@@ -17,4 +17,12 @@ export const connectionPool: Pool = new Pool ({
     max: 5
 });
 
+// Web configuration
+const app = express();
+app.use('/', express.json());
+app.use('/users', UserRouter);
+
+app.listen(8080, () => {
+    console.log('Project1 running and listening at http://localhost:8080');
+});
 
