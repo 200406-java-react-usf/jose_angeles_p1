@@ -13,4 +13,9 @@ export class UserService {
     constructor(private userRepository: UserRepository) {
         this.userRepository = userRepository;
     }
+    async getAllUsers(): Promise<User[]> {
+        let users = await this.userRepository.getAll();
+        
+    }
+
 }
