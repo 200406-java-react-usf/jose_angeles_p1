@@ -1,4 +1,15 @@
 import express from 'express';
-import {UserService} from '../config/app';
+import {userService} from '../config/app';
 
-export const UserService = express.Router();
+export const UserRouter = express.Router();
+
+const UserService = userService;
+
+UserRouter.get('', async (req, res) => {
+    try {
+        let payload = await UserService.getAllUsers();
+        res.status(200).json(payload);
+    } catch (e) {
+        res.status(e.statusCode).json(e);
+    }
+});
