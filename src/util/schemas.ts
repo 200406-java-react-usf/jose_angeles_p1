@@ -5,5 +5,5 @@ export interface UsersSchema {
     fn: string;
     ln: string;
     email: string;
-    role_id: number;
+    role: string;
 }

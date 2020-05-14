@@ -13,6 +13,6 @@ export function mapUserResultSet(resultSet: UsersSchema): User {
         resultSet.fn,
         resultSet.ln,
         resultSet.email,
-        resultSet.role_id
+        resultSet.role
     );
 };

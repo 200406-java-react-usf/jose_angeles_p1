@@ -34,8 +34,8 @@ export class UserService {
 
     async addNewUser(newUser: User): Promise<User> {
         try {
-            if (!isValidObject(newUser, 'id')) {
-                throw new BadRequestError('Invalid properly value found in provided user');
+            if (!isValidObject(newUser, 'username')) {
+                throw new BadRequestError('Invalid property value found in provided user');
             }
             const persistedUser = await this.userRepository.addNew(newUser);
             return persistedUser;
