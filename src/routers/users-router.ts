@@ -36,3 +36,26 @@ UserRouter.post('', async (req, res) => {
         res.status(e.statusCode).json(e);
     }  
 });
+
+UserRouter.put('', async (req, res) => {
+    console.log('PUT REQUEST RECEIVED AT /users');
+    console.log(req.body);
+
+    try {
+        let updatedUser = await userService.updateUser(req.body);
+        res.status(200).json(updatedUser);
+    } catch (e) {
+        res.status(e.statusCode).json(e);
+    }    
+});
+
+UserRouter.delete('', async (req, res) => {
+    console.log('DELETE REQUEST RECEIVED AT /users');
+    console.log(req.body);
+    try {
+        let deletedUser = await userService.deleteUserById(req.body);
+        res.status(200).json(deletedUser);
+    } catch (e) {
+        res.status(e.statusCode).json(e);
+    }    
+});

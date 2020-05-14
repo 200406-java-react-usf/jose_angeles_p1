@@ -7,11 +7,11 @@ export function mapUserResultSet(resultSet: UsersSchema): User {
     };
 
     return new User (
-        resultSet.id,
+        resultSet.ers_user_id,
         resultSet.username,
         resultSet.password,
-        resultSet.fn,
-        resultSet.ln,
+        resultSet.first_name,
+        resultSet.last_name,
         resultSet.email,
         resultSet.role
     );

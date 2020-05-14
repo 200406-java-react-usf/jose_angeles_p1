@@ -1,9 +1,9 @@
 export interface UsersSchema {
-    id: number;
+    ers_user_id: number;
     username: string;
     password: string;
-    fn: string;
-    ln: string;
+    first_name: string;
+    last_name: string;
     email: string;
     role: string;
 }
