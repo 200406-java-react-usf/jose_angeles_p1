@@ -1,7 +1,8 @@
-import {UsersSchema} from './schemas';
+import {UserSchema, ReimbursementSchema} from './schemas';
 import {User} from '../models/user';
+import {Reimbursement} from '../models/reimbursement';
 
-export function mapUserResultSet(resultSet: UsersSchema): User {
+export function mapUserResultSet(resultSet: UserSchema): User {
     if (!resultSet) {
         return {} as User;
     };
@@ -16,3 +17,21 @@ export function mapUserResultSet(resultSet: UsersSchema): User {
         resultSet.role
     );
 };
+
+export function mapReimbursementsResultSet (resultSet: ReimbursementSchema): Reimbursement {
+    if (!resultSet) {
+        return {} as Reimbursement;
+    }
+
+    return new Reimbursement (
+        resultSet.reimb_id,
+        resultSet.amount,
+        resultSet.submitted,
+        resultSet.resolved,
+        resultSet.description,
+        resultSet.author,
+        resultSet.resolver,
+        resultSet.status,
+        resultSet.type
+    )
+}
