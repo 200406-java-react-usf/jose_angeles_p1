@@ -15,7 +15,7 @@ UserRouter.get('', async (req, res) => {
 
         // send the status of payload and the value in json form
         res.status(200).json(payload);
-    } catch (e) {
+    } catch (e) {        
         res.status(e.statusCode).json(e);
     }
 });

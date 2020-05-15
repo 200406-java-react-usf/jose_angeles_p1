@@ -5,6 +5,7 @@ import {PoolClient} from 'pg';
 import {connectionPool} from '..';
 import {mapReimbursementResultSet} from '../util/result-set-mapper';
 
+// export the ReimbursementRepository
 export class ReimbursementRepository implements CrudRepository<Reimbursement> {
     baseQuery = `select r.reimb_id, 
                         r.amount, 
@@ -25,12 +26,21 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
                         join ers_reimbursement_types t 
                         on r.reimb_type_id = t.reimb_type_id`;
 
+    // the following methods will be called from ReimbursementService 
     async getAll(): Promise<Reimbursement[]> {
         let client: PoolClient;
         try {
+            // make connection to DB
             client = await connectionPool.connect();
+
+            // baseQuery to getAllReimb
             let sql = `${this.baseQuery}`;
+
+            // run the query
             let rs = await client.query(sql);
+            console.log(rs.rows.map(mapReimbursementResultSet));
+            
+            // map all reimb and return them
             return rs.rows.map(mapReimbursementResultSet);
         } catch (e) {
             throw new InternalServerError();
@@ -42,11 +52,16 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
     async getById(id: number): Promise<Reimbursement> {
         let client: PoolClient;
         try {
+            // connection to db
             client = await connectionPool.connect();
+
+            // this is our query
             let sql = `${this.baseQuery} where r.reimb_id = $1`;
+
+            // run our query
             let rs = await client.query(sql, [id]);
-            console.log(mapReimbursementResultSet(rs.rows[0]));
             
+            // map the resultSet and return it
             return mapReimbursementResultSet(rs.rows[0]);
         } catch (e) {
             throw new InternalServerError();
