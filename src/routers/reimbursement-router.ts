@@ -1,11 +1,11 @@
 import express from 'express';
 import { reimbursementService } from '../config/app';
 
-export const ReimbRouter = express.Router();
+export const ReimbursementRouter = express.Router();
 
 const ReimbService = reimbursementService;
 
-ReimbRouter.get('', async (req, res) => {
+ReimbursementRouter.get('', async (req, res) => {
     try {
         let payload = await ReimbService.getAllReimbursements();
         res.status(200).json(payload);
@@ -14,7 +14,7 @@ ReimbRouter.get('', async (req, res) => {
     }
 });
 
-ReimbRouter.get('/:id', async (req, res) => {
+ReimbursementRouter.get('/:id', async (req, res) => {
     const id = +req.params.id;
     try {
         let payload = await ReimbService.getReimbursementById(id);
@@ -24,7 +24,7 @@ ReimbRouter.get('/:id', async (req, res) => {
     }
 });
 
-ReimbRouter.post('', async (req, res) => {
+ReimbursementRouter.post('', async (req, res) => {
     console.log('POST REQUEST RECEIVED AT /reimbursements');
     console.log(req.body);
 
@@ -36,7 +36,7 @@ ReimbRouter.post('', async (req, res) => {
     }  
 });
 
-ReimbRouter.put('', async (req, res) => {
+ReimbursementRouter.put('', async (req, res) => {
     console.log('PUT REQUEST RECEIVED AT /reimbursements');
     console.log(req.body);
 
@@ -48,7 +48,7 @@ ReimbRouter.put('', async (req, res) => {
     }    
 });
 
-ReimbRouter.delete('', async (req, res) => {
+ReimbursementRouter.delete('', async (req, res) => {
     console.log('DELETE REQUEST RECEIVED AT /reimbursements');
     console.log(req.body);
     try {

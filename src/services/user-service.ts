@@ -1,5 +1,5 @@
 import { User } from '../models/user';
-import { UserRepository } from '../repos/users-repo';
+import { UserRepository } from '../repos/user-repo';
 import {isValidId, isValidStrings, isValidObject, isPropertyOf, isEmptyObject} from '../util/validator';
 import { 
     BadRequestError, 
