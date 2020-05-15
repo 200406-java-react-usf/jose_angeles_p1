@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 import express from 'express';
 
-import { UserRouter } from './routers/users-router';
+import { UserRouter } from './routers/user-router';
+import { ReimbursementRouter } from './routers/reimbursement-router';
 import {Pool} from 'pg';
 
 // environment configuration
@@ -21,6 +22,7 @@ export const connectionPool: Pool = new Pool ({
 const app = express();
 app.use('/', express.json());
 app.use('/users', UserRouter);
+app.use('/reimbursements', ReimbursementRouter);
 
 app.listen(8080, () => {
     console.log('Project1 running and listening at http://localhost:8080');
