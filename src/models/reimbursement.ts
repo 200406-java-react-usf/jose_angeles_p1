@@ -1,4 +1,4 @@
-export class Reimbursements {
+export class Reimbursement {
     id: number;
     amount: number;
     submitted: Date;

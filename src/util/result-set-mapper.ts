@@ -18,7 +18,7 @@ export function mapUserResultSet(resultSet: UserSchema): User {
     );
 };
 
-export function mapReimbursementsResultSet (resultSet: ReimbursementSchema): Reimbursement {
+export function mapReimbursementResultSet (resultSet: ReimbursementSchema): Reimbursement {
     if (!resultSet) {
         return {} as Reimbursement;
     }
