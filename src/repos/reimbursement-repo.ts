@@ -45,6 +45,8 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
             client = await connectionPool.connect();
             let sql = `${this.baseQuery} where r.reimb_id = $1`;
             let rs = await client.query(sql, [id]);
+            console.log(mapReimbursementResultSet(rs.rows[0]));
+            
             return mapReimbursementResultSet(rs.rows[0]);
         } catch (e) {
             throw new InternalServerError();
@@ -75,6 +77,8 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
             let rs = await client.query(sql, [newReimbursement.amount, newReimbursement.submitted, 
                                                 newReimbursement.resolved, newReimbursement.description, 
                                                 authorId, resolverId, statusId, typeId]); 
+                                                console.log(rs.rows[0]);
+                                                
             newReimbursement.id = rs.rows[0].reimb_id;
             return newReimbursement;
         } catch (e) {

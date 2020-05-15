@@ -27,7 +27,7 @@ export class ReimbursementService {
             throw new BadRequestError('The id is not valid');
         }
         let reimbursement = await this.reimbursementRepo.getById(id);
-        if (!isEmptyObject(reimbursement)) {
+        if (isEmptyObject(reimbursement)) {
             throw new ResourceNotFoundError('There is no reimbursement for given id');
         };
         return reimbursement;
