@@ -38,7 +38,6 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
 
             // run the query
             let rs = await client.query(sql);
-            console.log(rs.rows.map(mapReimbursementResultSet));
             
             // map all reimb and return them
             return rs.rows.map(mapReimbursementResultSet);
