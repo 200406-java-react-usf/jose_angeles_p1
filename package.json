@@ -4,9 +4,11 @@
   "description": "Project 1 for revature",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node ./build/index.js",
-    "test": "jest --watch --no-cache",
-    "coverage": "jest --coverage",
+    "start": "node ./build/index.js",
+    "dev-start": "tsc && node ./build/index.js",
+    "test": "jest --no-cache",
+    "coverage": "jest --coverage --no-cache",
+    "watch-tests": "jest --watch --no-cache",
     "build": "tsc"
   },
   "repository": {
