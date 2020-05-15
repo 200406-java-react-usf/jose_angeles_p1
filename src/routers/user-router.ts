@@ -1,6 +1,5 @@
 import express from 'express';
 import {userService} from '../config/app';
-import { brotliDecompressSync } from 'zlib';
 
 export const UserRouter = express.Router();
 
@@ -42,7 +41,7 @@ UserRouter.put('', async (req, res) => {
     console.log(req.body);
 
     try {
-        let updatedUser = await userService.updateUser(req.body);
+        let updatedUser = await UserService.updateUser(req.body);
         res.status(200).json(updatedUser);
     } catch (e) {
         res.status(e.statusCode).json(e);
@@ -53,7 +52,7 @@ UserRouter.delete('', async (req, res) => {
     console.log('DELETE REQUEST RECEIVED AT /users');
     console.log(req.body);
     try {
-        let deletedUser = await userService.deleteUserById(req.body);
+        let deletedUser = await UserService.deleteUserById(req.body);
         res.status(200).json(deletedUser);
     } catch (e) {
         res.status(e.statusCode).json(e);
