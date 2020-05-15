@@ -59,6 +59,7 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
         let client: PoolClient;
         try {
             client = await connectionPool.connect();
+            // we need to 
             let authorId = (await client.query(`select ers_user_id 
                                                 from ers_user 
                                                 where username = $1`, [newReimbursement.author])).rows[0].ers_user_id; 
