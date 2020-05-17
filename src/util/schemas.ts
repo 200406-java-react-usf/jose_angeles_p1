@@ -17,7 +17,7 @@ export interface ReimbursementSchema {
     resolved: Date;
     description: string;
     author: string;
-    resolver: string;
+    resolver: number;
     status: string;
     type: string;
 }

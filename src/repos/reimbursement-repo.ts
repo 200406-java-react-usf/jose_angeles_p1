@@ -1,6 +1,6 @@
 import {Reimbursement} from '../models/reimbursement';
 import {CrudRepository} from './crud-repo';
-import {InternalServerError} from '../errors/errors';
+import {InternalServerError, BadRequestError} from '../errors/errors';
 import {PoolClient} from 'pg';
 import {connectionPool} from '..';
 import {mapReimbursementResultSet} from '../util/result-set-mapper';
@@ -13,14 +13,12 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
                         r.resolved, 
                         r.description, 
                         u.username as author, 
-                        u2.username as resolver,
+                        r.resolver_id as resolver,
                         s.reimb_status as status,
                         t.reimb_type as type
                         from ers_reimbursements r 
                         join ers_users u 
                         on r.author_id = u.ers_user_id 
-                        join ers_users u2
-                        on r.resolver_id = u2.ers_user_id 
                         join ers_reimbursement_statuses s
                         on r.reimb_status_id = s.reimb_status_id 
                         join ers_reimbursement_types t 
@@ -38,7 +36,7 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
 
             // run the query
             let rs = await client.query(sql);
-            
+
             // map all reimb and return them
             return rs.rows.map(mapReimbursementResultSet);
         } catch (e) {
@@ -123,43 +121,45 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
     async update(updatedReimbursement: Reimbursement): Promise<boolean> {
         let client: PoolClient;
         try {
+            // make db connection
             client = await connectionPool.connect();
+
+            // we need to get the status Id first to make sure the reimbursement
+            // is in a pending status. If not, we can't update                                  
+            let statusId = (await client.query(`select reimb_status_id 
+                                                from ers_reimbursements
+                                                where reimb_id = $1`, [updatedReimbursement.id])).rows[0].reimb_status_id;                                         
+            
+            // here we check if the status is pending                               
+            if (statusId == 2 || statusId == 3) {
+                throw new BadRequestError('You can only update a pending reimbursement');
+            }
+
+            // we need to get submitted time from DB because we can't change that
+            let getSubmitted = (await client.query(`select submitted 
+                                                    from ers_reimbursements 
+                                                    where reimb_id = $1`, [updatedReimbursement.id])).rows[0].submitted;
+            
             // we need to get author id
             let authorId = (await client.query(`select ers_user_id 
-                                                from ers_user 
-                                                where username = $1`, [updatedReimbursement.author])).rows[0].ers_user_id; 
+                                                from ers_users 
+                                                where username = $1`, [updatedReimbursement.author])).rows[0].ers_user_id;
 
-            // we need to get resolver id                                     
-            let resolverId = (await client.query(`select ers_user_id 
-                                                from ers_user 
-                                                where username = $1`, [updatedReimbursement.resolver])).rows[0].ers_user_id;
-
-            // we need to get the status Id                                    
-            let statusId = (await client.query(`select reimb_status_id 
-                                                from ers_reimbursement_statuses 
-                                                where reimb_status = $1`, [updatedReimbursement.status])).rows[0].reimb_status_id;
-
-            // we need to get the type id                                    
+            // we need to get the type id                                   
             let typeId = (await client.query(`select reimb_type_id 
                                                 from ers_reimbursement_types 
                                                 where reimb_type = $1`, [updatedReimbursement.type])).rows[0].reimb_type_id;
-            
+
             // query to update reimb                                    
             let sql = `update ers_reimbursements set amount = $2,
-                                                submitted = $3,
-                                                resolved = $4,
-                                                description = $5,
-                                                author_id = $6,
-                                                resolver_id = $7,
-                                                reimb_status_id = $8,
-                                                reimb_type_id = $9
+                                                description = $3,
+                                                author_id = $4,
+                                                reimb_type_id = $5
                                                 where reimb_id = $1`;                                            
             
             // run query                                    
-            let rs = await client.query(sql,[updatedReimbursement.id, updatedReimbursement.amount, 
-                                            updatedReimbursement.submitted, updatedReimbursement.resolved, 
-                                            updatedReimbursement.description, authorId, resolverId,
-                                            statusId, typeId]);
+            let rs = await client.query(sql,[updatedReimbursement.id, updatedReimbursement.amount,
+                                            updatedReimbursement.description, authorId, typeId]);
 
             // return boolean                                 
             if(rs.rowCount) return true;    
