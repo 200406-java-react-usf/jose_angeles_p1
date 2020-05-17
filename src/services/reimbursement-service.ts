@@ -91,10 +91,10 @@ export class ReimbursementService {
         
         // check if string is valid
         if (!isValidStrings(username)) {
-            throw new BadRequestError('username is not valid');
+            throw new BadRequestError('string is not valid');
         }
 
-        // call getAll and store the value
+        // call getAllReimb and store the value
         let reimbursements = await this.reimbursementRepo.getAllMyReimb(username);
 
         // check if what we got is empty
@@ -106,6 +106,41 @@ export class ReimbursementService {
         return reimbursements;
     }
 
+    async filterReimbByType(type: string): Promise<Reimbursement[]> {
+        // check if string is valid
+        if (!isValidStrings(type)) {
+            throw new BadRequestError('string is not valid');
+        }
+
+        // call filterReimbType and store the value
+        let reimbursements = await this.reimbursementRepo.filterReimbType(type);
+
+        // check if what we got is empty
+        if (reimbursements.length == 0){
+             throw new ResourceNotFoundError('There aren\'t any reimbursements');
+        }
+ 
+        // return what we got
+        return reimbursements;
+    }
+
+    async filterReimbByStatus(status: string): Promise<Reimbursement[]> {
+        // check if string is valid
+        if (!isValidStrings(status)) {
+            throw new BadRequestError('string is not valid');
+        }
+
+        // call filterReimbStatus and store the value
+        let reimbursements = await this.reimbursementRepo.filterReimbStatus(status);
+
+        // check if what we got is empty
+        if (reimbursements.length == 0){
+             throw new ResourceNotFoundError('There aren\'t any reimbursements');
+        }
+ 
+        // return what we got
+        return reimbursements;
+    }
     // async deleteReimbursementById (jsonObj: object): Promise<boolean> {
     //     // in the following 3 lines we extract the id from the json object
     //     let keys = Object.keys(jsonObj);
