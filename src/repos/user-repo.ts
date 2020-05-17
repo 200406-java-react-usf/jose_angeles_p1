@@ -1,7 +1,7 @@
 import {User} from '../models/user';
 import {CrudRepository} from './crud-repo';
 import {InternalServerError} from '../errors/errors';
-import {PoolClient} from 'pg';
+import {PoolClient, Pool} from 'pg';
 import {connectionPool} from '..';
 import {mapUserResultSet} from '../util/result-set-mapper';
 
@@ -53,6 +53,21 @@ export class UserRepository implements CrudRepository<User> {
             let rs = await client.query(sql, [id]);
 
             // This time we map only one user
+            return mapUserResultSet(rs.rows[0]);
+        } catch (e) {
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+    }
+
+    async getUserByCredentials(un: string, pw: string) {
+        let client: PoolClient;
+
+        try {
+            client = await connectionPool.connect();
+            let sql = `${this.baseQuery} where u.username = $1 and u.password = $2`;
+            let rs = await client.query(sql, [un, pw]);
             return mapUserResultSet(rs.rows[0]);
         } catch (e) {
             throw new InternalServerError();
