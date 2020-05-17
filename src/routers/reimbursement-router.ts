@@ -1,5 +1,7 @@
 import express from 'express';
 import { reimbursementService } from '../config/app';
+import { isEmptyObject } from '../util/validator';
+import { managerGuard } from '../middleware/auth-middleware';
 
 // export ReimbursementRouter
 export const ReimbursementRouter = express.Router();
@@ -7,7 +9,7 @@ export const ReimbursementRouter = express.Router();
 const ReimbService = reimbursementService;
 
 // GET method to get all reimbs
-ReimbursementRouter.get('', async (req, res) => {
+ReimbursementRouter.get('', managerGuard, async (req, res) => {
     try {
         let payload = await ReimbService.getAllReimbursements();
         res.status(200).json(payload);
@@ -17,7 +19,7 @@ ReimbursementRouter.get('', async (req, res) => {
 });
 
 // GET method to get a reimb by Id
-ReimbursementRouter.get('/:id', async (req, res) => {
+ReimbursementRouter.get('/:id', managerGuard, async (req, res) => {
     const id = +req.params.id;
     try {
         let payload = await ReimbService.getReimbursementById(id);
@@ -39,7 +41,7 @@ ReimbursementRouter.get('/myreimb/:username', async (req, res) => {
 });
 
 //GET method to filter reimbursements by type
-ReimbursementRouter.get('/filtertype/:type', async (req, res) => {
+ReimbursementRouter.get('/filtertype/:type', managerGuard, async (req, res) => {
     const type = req.params.type;
     try {
         let payload = await ReimbService.filterReimbByType(type);
@@ -50,7 +52,7 @@ ReimbursementRouter.get('/filtertype/:type', async (req, res) => {
 });
 
 //GET method to filter reimbursements by status
-ReimbursementRouter.get('/filterstatus/:status', async (req, res) => {
+ReimbursementRouter.get('/filterstatus/:status', managerGuard, async (req, res) => {
     const status = req.params.status;
     try {
         let payload = await ReimbService.filterReimbByStatus(status);
@@ -86,8 +88,8 @@ ReimbursementRouter.put('', async (req, res) => {
     }    
 });
 
-// PUT method to update the status of a reimbursement
-ReimbursementRouter.put('/status', async (req, res) => {
+// PUT method to approve or deny a pending reimbursement
+ReimbursementRouter.put('/status', managerGuard, async (req, res) => {
     console.log('PUT REQUEST RECEIVED AT /reimbursements/status');
     console.log(req.body);
 

@@ -2,7 +2,6 @@ import url from 'url';
 import express, { response } from 'express';
 import {userService} from '../config/app';
 import { isEmptyObject } from '../util/validator';
-import { ParsedUrlQuery } from 'querystring';
 import { adminGuard } from '../middleware/auth-middleware';
 
 // create a UserRouter and export it
