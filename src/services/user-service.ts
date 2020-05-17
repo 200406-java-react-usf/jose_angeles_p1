@@ -46,6 +46,31 @@ export class UserService {
         return user;
     }
 
+    async authenticateUser(un: string, pw: string): Promise<User> {
+        try {
+            // check to see if the un and pw are strings
+            if (!isValidStrings(un, pw)) {
+                throw new BadRequestError();
+            }
+            
+            let authUser: User;
+            
+            // check if the user really exists by these credentials
+            authUser = await this.userRepository.getUserByCredentials(un, pw);
+           
+            // check if what we got is empty
+            if (isEmptyObject(authUser)) {
+                throw new AuthenticationError('Bad credentials provided.');
+            }
+
+            // return the authUser after password is removed
+            return this.removePassword(authUser);
+
+        } catch (e) {
+            throw e;
+        }
+    }
+
     async addNewUser(newUser: User): Promise<User> {
         try {
             // is our input a valid User?
@@ -100,5 +125,16 @@ export class UserService {
         } catch (e) {
             throw e;
         }
+    }
+
+    // we make this function to remove the password from the User
+    private removePassword(user: User): User {
+        // if there is no password, then just return the user
+        if(!user || !user.password) return user;
+
+        // else, pass a copy of user with password deleted
+        let usr = {...user};
+        delete usr.password;
+        return usr;   
     }
 }
