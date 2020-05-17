@@ -36,7 +36,7 @@ UserRouter.get('', adminGuard, async (req, res) => {
 });
 
 // we'll be using this GET method to get an User by Id
-UserRouter.get('/:id', async (req, res) => {
+UserRouter.get('/:id', adminGuard, async (req, res) => {
     // get id from the parameter being passed
     const id = +req.params.id;
     try {
@@ -51,7 +51,7 @@ UserRouter.get('/:id', async (req, res) => {
 });
 
 // we'll be using this POST method to create a new User
-UserRouter.post('', async (req, res) => {
+UserRouter.post('', adminGuard, async (req, res) => {
     console.log('POST REQUEST RECEIVED AT /users');
     console.log(req.body);
 
@@ -67,7 +67,7 @@ UserRouter.post('', async (req, res) => {
 });
 
 // we'll be using this PUT method to update a new User
-UserRouter.put('', async (req, res) => {
+UserRouter.put('', adminGuard, async (req, res) => {
     console.log('PUT REQUEST RECEIVED AT /users');
     console.log(req.body);
 
@@ -83,7 +83,7 @@ UserRouter.put('', async (req, res) => {
 });
 
 // we'll be using this DELETE method to delete an User
-UserRouter.delete('', async (req, res) => {
+UserRouter.delete('', adminGuard, async (req, res) => {
     console.log('DELETE REQUEST RECEIVED AT /users');
     console.log(req.body);
     try {
