@@ -72,21 +72,26 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
     async addNew(newReimbursement: Reimbursement): Promise<Reimbursement> {
         let client: PoolClient;
         try {
-            client = await connectionPool.connect();
-            // we need to get author id 
-            let authorId = (await client.query(`select ers_user_id 
-                                                from ers_user 
-                                                where username = $1`, [newReimbursement.author])).rows[0].ers_user_id;
-                                                
-            // we need to get resolver id                                    
-            let resolverId = (await client.query(`select ers_user_id 
-                                                from ers_user 
-                                                where username = $1`, [newReimbursement.resolver])).rows[0].ers_user_id;
+            // make a new date for today
+            let today = new Date();
 
-            // we need to get the status Id                                     
-            let statusId = (await client.query(`select reimb_status_id 
-                                                from ers_reimbursement_statuses 
-                                                where reimb_status = $1`, [newReimbursement.status])).rows[0].reimb_status_id;
+            // arrange today's date in sql form
+            let todayDate = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
+
+            // now arrange the time in sql form
+            let todayTime = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+
+            // now concat today's date and today's time for submitted field
+            let newSubmitted = todayDate + ' ' + todayTime;            
+
+            // the initial status will always be pending when you first make a new reimb
+            const newStatus = 1;
+
+            client = await connectionPool.connect();
+            // we need to get author id but we don't need resolver because it was just created
+            let authorId = (await client.query(`select ers_user_id 
+                                                from ers_users 
+                                                where username = $1`, [newReimbursement.author])).rows[0].ers_user_id;                                                                                               
 
             // we need to get the type id                                   
             let typeId = (await client.query(`select reimb_type_id 
@@ -96,13 +101,12 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
             // query to create new reimbursement                                  
             let sql = `insert into ers_reimbursements (amount, submitted, resolved, description,
                                                 author_id, resolver_id, reimb_status_id, reimb_type_id) values
-                                                ($1, $2, $3, $4, $5, $6, $7, $8) returning reimb_id`;
+                                                ($1, $2, null, $3, $4, null, $5, $6) returning reimb_id`;
             
             // run query                                    
-            let rs = await client.query(sql, [newReimbursement.amount, newReimbursement.submitted, 
-                                                newReimbursement.resolved, newReimbursement.description, 
-                                                authorId, resolverId, statusId, typeId]); 
-                                                console.log(rs.rows[0]);
+            let rs = await client.query(sql, [newReimbursement.amount, newSubmitted, 
+                                                newReimbursement.description, 
+                                                authorId, newStatus, typeId]);
             
             // make the new reimbursement id equal to the id created by the db
             newReimbursement.id = rs.rows[0].reimb_id;

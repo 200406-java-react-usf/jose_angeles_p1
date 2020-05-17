@@ -1,10 +1,12 @@
 import express from 'express';
 import { reimbursementService } from '../config/app';
 
+// export ReimbursementRouter
 export const ReimbursementRouter = express.Router();
 
 const ReimbService = reimbursementService;
 
+// GET method to get all reimbs
 ReimbursementRouter.get('', async (req, res) => {
     try {
         let payload = await ReimbService.getAllReimbursements();
@@ -14,6 +16,7 @@ ReimbursementRouter.get('', async (req, res) => {
     }
 });
 
+// GET method to get a reimb by Id
 ReimbursementRouter.get('/:id', async (req, res) => {
     const id = +req.params.id;
     try {
@@ -24,6 +27,7 @@ ReimbursementRouter.get('/:id', async (req, res) => {
     }
 });
 
+// POST method to create a new reimb
 ReimbursementRouter.post('', async (req, res) => {
     console.log('POST REQUEST RECEIVED AT /reimbursements');
     console.log(req.body);
@@ -36,6 +40,7 @@ ReimbursementRouter.post('', async (req, res) => {
     }  
 });
 
+// PUT method to update an existing reimb
 ReimbursementRouter.put('', async (req, res) => {
     console.log('PUT REQUEST RECEIVED AT /reimbursements');
     console.log(req.body);
@@ -48,6 +53,7 @@ ReimbursementRouter.put('', async (req, res) => {
     }    
 });
 
+// DELETE method to delete a reimb
 ReimbursementRouter.delete('', async (req, res) => {
     console.log('DELETE REQUEST RECEIVED AT /reimbursements');
     console.log(req.body);
