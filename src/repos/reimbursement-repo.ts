@@ -234,7 +234,7 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
         }
     }
 
-    async setReimbStatus (id: number, status: string): Promise<boolean> {
+    async setReimbStatus (reimb: Reimbursement): Promise<boolean> {
         let client: PoolClient;
         try {
             // make connection to DB
@@ -242,9 +242,10 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
 
             // we need to get the status id from the db
             let statusId = (await client.query(`select reimb_status_id 
-                                                from ers_reimbursements_statuses
-                                                where reimb_status = $1`, [status])).rows[0].reimb_status_id;
-
+                                                from ers_reimbursement_statuses
+                                                where reimb_status = $1`, [reimb.status])).rows[0].reimb_status_id;
+            console.log(statusId);
+            
             // make a new date for today
             let today = new Date();
 
@@ -263,9 +264,9 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
                                                     where reimb_id = $1`;
 
             // run the query
-            let rs = await client.query(sql, [id, statusId, newResolved]);
+            let rs = await client.query(sql, [reimb.id, statusId, newResolved]);
 
-            // map all reimb and return them
+            // return boolean
             return true;
         } catch (e) {
             throw new InternalServerError();

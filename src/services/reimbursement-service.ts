@@ -142,20 +142,15 @@ export class ReimbursementService {
         return reimbursements;
     }
 
-    async SetReimbursementStatus(id: number, status: string): Promise<boolean> {
+    async SetReimbursementStatus(reimb: Reimbursement): Promise<boolean> {
         // check if string is valid
-        if (!isValidStrings(status)) {
-            throw new BadRequestError('string is not valid');
-        }
-
-        // check if id is valid number
-        if (!isValidId(id)) {
-            throw new BadRequestError('invalid id, not a number');
+        if (!isValidObject(reimb, 'id')) {
+            throw new BadRequestError('object is not valid');
         }
 
         // call setReimbStatus and store the value
-        let persistedStatus = await this.reimbursementRepo.setReimbStatus(id, status);
-        
+        let persistedStatus = await this.reimbursementRepo.setReimbStatus(reimb);
+
         // return what we got
         return persistedStatus;
     }

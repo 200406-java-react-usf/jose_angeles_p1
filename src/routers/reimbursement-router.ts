@@ -73,7 +73,7 @@ ReimbursementRouter.post('', async (req, res) => {
     }  
 });
 
-// PUT method to update an existing reimb
+// PUT method to update an existing reimb if status pending
 ReimbursementRouter.put('', async (req, res) => {
     console.log('PUT REQUEST RECEIVED AT /reimbursements');
     console.log(req.body);
@@ -86,6 +86,18 @@ ReimbursementRouter.put('', async (req, res) => {
     }    
 });
 
+// PUT method to update the status of a reimbursement
+ReimbursementRouter.put('/status', async (req, res) => {
+    console.log('PUT REQUEST RECEIVED AT /reimbursements/status');
+    console.log(req.body);
+
+    try {
+        let updatedReimb = await ReimbService.SetReimbursementStatus(req.body);
+        res.status(200).json(updatedReimb);
+    } catch (e) {
+        res.status(e.statusCode).json(e);
+    }    
+});
 
 
 // DELETE method to delete a reimb
