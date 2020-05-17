@@ -87,25 +87,44 @@ export class ReimbursementService {
         }
     }
 
-    async deleteReimbursementById (jsonObj: object): Promise<boolean> {
-        // in the following 3 lines we extract the id from the json object
-        let keys = Object.keys(jsonObj);
-        let val = keys[0];
-        let reimbId = +jsonObj[val];
-
-        try {
-            // check if the id we got is a proper number
-            if (!isValidId(reimbId)) {
-                throw new BadRequestError('Invalid id provided');
-            }
-
-            // call deleteById and pass the id we extracted earlier
-            let deletedReimb = this.reimbursementRepo.deleteById(reimbId);
-
-            // return true if deletion was successful
-            return deletedReimb;
-        } catch (e) {
-            throw e;
+    async getAllMyReimbursements(username: string): Promise<Reimbursement[]> {
+        
+        // check if string is valid
+        if (!isValidStrings(username)) {
+            throw new BadRequestError('username is not valid');
         }
+
+        // call getAll and store the value
+        let reimbursements = await this.reimbursementRepo.getAllMyReimb(username);
+
+        // check if what we got is empty
+        if (reimbursements.length == 0){
+             throw new ResourceNotFoundError('There aren\'t any reimbursements associated with given username');
+        }
+ 
+        // return what we got
+        return reimbursements;
     }
+
+    // async deleteReimbursementById (jsonObj: object): Promise<boolean> {
+    //     // in the following 3 lines we extract the id from the json object
+    //     let keys = Object.keys(jsonObj);
+    //     let val = keys[0];
+    //     let reimbId = +jsonObj[val];
+
+    //     try {
+    //         // check if the id we got is a proper number
+    //         if (!isValidId(reimbId)) {
+    //             throw new BadRequestError('Invalid id provided');
+    //         }
+
+    //         // call deleteById and pass the id we extracted earlier
+    //         let deletedReimb = this.reimbursementRepo.deleteById(reimbId);
+
+    //         // return true if deletion was successful
+    //         return deletedReimb;
+    //     } catch (e) {
+    //         throw e;
+    //     }
+    // }
 }

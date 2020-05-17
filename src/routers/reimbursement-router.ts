@@ -27,6 +27,17 @@ ReimbursementRouter.get('/:id', async (req, res) => {
     }
 });
 
+// GET method to get all reimbs for a specific user 
+ReimbursementRouter.get('/:username', async (req, res) => {
+    const username = req.params.username;
+    try {
+        let payload = await ReimbService.getAllMyReimbursements(username);
+        res.status(200).json(payload);
+    } catch (e) {
+        res.status(e.statusCode).json(e);
+    }
+});
+
 // POST method to create a new reimb
 ReimbursementRouter.post('', async (req, res) => {
     console.log('POST REQUEST RECEIVED AT /reimbursements');
@@ -53,14 +64,16 @@ ReimbursementRouter.put('', async (req, res) => {
     }    
 });
 
+
+
 // DELETE method to delete a reimb
-ReimbursementRouter.delete('', async (req, res) => {
-    console.log('DELETE REQUEST RECEIVED AT /reimbursements');
-    console.log(req.body);
-    try {
-        let deletedReimb = await ReimbService.deleteReimbursementById(req.body);
-        res.status(200).json(deletedReimb);
-    } catch (e) {
-        res.status(e.statusCode).json(e);
-    }    
-});
+// ReimbursementRouter.delete('', async (req, res) => {
+//     console.log('DELETE REQUEST RECEIVED AT /reimbursements');
+//     console.log(req.body);
+//     try {
+//         let deletedReimb = await ReimbService.deleteReimbursementById(req.body);
+//         res.status(200).json(deletedReimb);
+//     } catch (e) {
+//         res.status(e.statusCode).json(e);
+//     }    
+// });
