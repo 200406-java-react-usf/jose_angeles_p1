@@ -28,7 +28,7 @@ ReimbursementRouter.get('/:id', async (req, res) => {
 });
 
 // GET method to get all reimbs for a specific user 
-ReimbursementRouter.get('/:username', async (req, res) => {
+ReimbursementRouter.get('/myreimb/:username', async (req, res) => {
     const username = req.params.username;
     try {
         let payload = await ReimbService.getAllMyReimbursements(username);
