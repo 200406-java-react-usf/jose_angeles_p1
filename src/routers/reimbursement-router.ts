@@ -38,6 +38,28 @@ ReimbursementRouter.get('/myreimb/:username', async (req, res) => {
     }
 });
 
+//GET method to filter reimbursements by type
+ReimbursementRouter.get('/filtertype/:type', async (req, res) => {
+    const type = req.params.type;
+    try {
+        let payload = await ReimbService.filterReimbByType(type);
+        res.status(200).json(payload);
+    } catch (e) {
+        res.status(e.statusCode).json(e);
+    }
+});
+
+//GET method to filter reimbursements by status
+ReimbursementRouter.get('/filterstatus/:status', async (req, res) => {
+    const status = req.params.status;
+    try {
+        let payload = await ReimbService.filterReimbByStatus(status);
+        res.status(200).json(payload);
+    } catch (e) {
+        res.status(e.statusCode).json(e);
+    }
+});
+
 // POST method to create a new reimb
 ReimbursementRouter.post('', async (req, res) => {
     console.log('POST REQUEST RECEIVED AT /reimbursements');

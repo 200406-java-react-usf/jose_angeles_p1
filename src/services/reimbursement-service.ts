@@ -141,6 +141,26 @@ export class ReimbursementService {
         // return what we got
         return reimbursements;
     }
+
+    async SetReimbursementStatus(id: number, status: string): Promise<boolean> {
+        // check if string is valid
+        if (!isValidStrings(status)) {
+            throw new BadRequestError('string is not valid');
+        }
+
+        // check if id is valid number
+        if (!isValidId(id)) {
+            throw new BadRequestError('invalid id, not a number');
+        }
+
+        // call setReimbStatus and store the value
+        let persistedStatus = await this.reimbursementRepo.setReimbStatus(id, status);
+        
+        // return what we got
+        return persistedStatus;
+    }
+
+
     // async deleteReimbursementById (jsonObj: object): Promise<boolean> {
     //     // in the following 3 lines we extract the id from the json object
     //     let keys = Object.keys(jsonObj);

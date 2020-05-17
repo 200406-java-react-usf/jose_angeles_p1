@@ -234,23 +234,63 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
         }
     }
 
-    async deleteById(id: number): Promise<boolean> {
+    async setReimbStatus (id: number, status: string): Promise<boolean> {
         let client: PoolClient;
         try {
+            // make connection to DB
             client = await connectionPool.connect();
 
-            // query to delete reimb
-            let sql = `delete from ers_reimbursements where reimb_id = $1`;
+            // we need to get the status id from the db
+            let statusId = (await client.query(`select reimb_status_id 
+                                                from ers_reimbursements_statuses
+                                                where reimb_status = $1`, [status])).rows[0].reimb_status_id;
 
-            // run query
-            await client.query(sql, [id]);
+            // make a new date for today
+            let today = new Date();
 
-            // always return true if query ran successfully
+            // arrange today's date in sql form
+            let todayDate = today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
+
+            // now arrange the time in sql form
+            let todayTime = today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds();
+
+            // now concat today's date and today's time for submitted field
+            let newResolved = todayDate + ' ' + todayTime;
+
+            // baseQuery to getAllReimb
+            let sql = `update ers_reimbursements set reimb_status_id = $2,
+                                                    resolved = $3
+                                                    where reimb_id = $1`;
+
+            // run the query
+            let rs = await client.query(sql, [id, statusId, newResolved]);
+
+            // map all reimb and return them
             return true;
         } catch (e) {
             throw new InternalServerError();
         } finally {
             client && client.release();
         }
-    }   
+    }
+
+    // async deleteById(id: number): Promise<boolean> {
+    //     let client: PoolClient;
+    //     try {
+    //         client = await connectionPool.connect();
+
+    //         // query to delete reimb
+    //         let sql = `delete from ers_reimbursements where reimb_id = $1`;
+
+    //         // run query
+    //         await client.query(sql, [id]);
+
+    //         // always return true if query ran successfully
+    //         return true;
+    //     } catch (e) {
+    //         throw new InternalServerError();
+    //     } finally {
+    //         client && client.release();
+    //     }
+    // }   
 }
