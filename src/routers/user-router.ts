@@ -1,5 +1,9 @@
-import express from 'express';
+import url from 'url';
+import express, { response } from 'express';
 import {userService} from '../config/app';
+import { isEmptyObject } from '../util/validator';
+import { ParsedUrlQuery } from 'querystring';
+import { adminGuard } from '../middleware/auth-middleware';
 
 // create a UserRouter and export it
 export const UserRouter = express.Router();
@@ -8,13 +12,24 @@ export const UserRouter = express.Router();
 const UserService = userService;
 
 // we'll be using this GET method to get all Users
-UserRouter.get('', async (req, res) => {
+UserRouter.get('', adminGuard, async (req, res) => {
+    console.log('GET ALL USERS AT /users');
+    
     try {
-        // getAllUsers and store it
-        let payload = await UserService.getAllUsers();
 
-        // send the status of payload and the value in json form
-        res.status(200).json(payload);
+        let reqURL = url.parse(req.url, true);
+
+        if (!isEmptyObject(reqURL.query)) {
+            let payload = await UserService.getUserByUniqueKey({...reqURL.query});
+            res.status(200).json(payload);
+        } else {
+            // getAllUsers and store it
+            let payload = await UserService.getAllUsers();
+
+            // send the status of payload and the value in json form
+            res.status(200).json(payload);
+        }
+        
     } catch (e) {        
         res.status(e.statusCode).json(e);
     }
