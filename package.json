@@ -38,6 +38,7 @@
     "@typescript-eslint/parser": "^2.29.0",
     "eslint": "^6.8.0",
     "jest": "^25.5.1",
+    "morgan": "^1.10.0",
     "ts-jest": "^25.4.0",
     "tsc-watch": "^4.2.3",
     "typescript": "^3.8.3"
