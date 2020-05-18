@@ -2,6 +2,7 @@ import url from 'url';
 import express, { response } from 'express';
 import {userService} from '../config/app';
 import { isEmptyObject } from '../util/validator';
+import { ParsedUrlQuery } from 'querystring';
 import { adminGuard } from '../middleware/auth-middleware';
 
 // create a UserRouter and export it
@@ -15,12 +16,19 @@ UserRouter.get('', adminGuard, async (req, res) => {
     console.log('GET ALL USERS AT /users');
     
     try {
-        // getAllUsers and store it
-        let payload = await UserService.getAllUsers();
+        // parse the url
+        let reqURL = url.parse(req.url, true);
 
-        // send the status of payload and the value in json form
-        res.status(200).json(payload);
-        } catch (e) {        
+        // check if the object given is empty
+        if(!isEmptyObject<ParsedUrlQuery>(reqURL.query)) {
+            let payload = await userService.getUserByUniqueKey({...reqURL.query});
+            res.status(200).json(payload);
+        } else {
+            let payload = await userService.getAllUsers();
+            res.status(200).json(payload);
+        }
+
+    } catch (e) {
         res.status(e.statusCode).json(e);
     }
 });

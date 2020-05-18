@@ -243,10 +243,11 @@ describe('userService', () => {
         Validator.isValidId = jest.fn().mockReturnValue(false);
         Validator.isValidObject = jest.fn().mockReturnValue(true);
         mockRepo.addNew =  jest.fn().mockReturnValue(mockUsers[5]);
+
         // Act
         try {
 
-            let newUser = new User(6, null, 'password', 'test', 'test', 'test@revature.com', 'Admin')
+            let newUser = new User(6, null, 'password', 'test', 'test', 'test@revature.com', 'User')
             await sut.addNewUser(newUser);
 
         } catch (e) {
@@ -265,7 +266,7 @@ describe('userService', () => {
 
         // Act
         try {
-            let newUser = new User(1, 'aanderson', 'password', 'Alice', 'Anderson', 'aanderson@revature.com', 'Admin');
+            let newUser = new User(6, 'test', 'password', 'test', 'test', 'test@revature.com', 'User');
             await sut.addNewUser(newUser);
 
         } catch (e) {

@@ -25,7 +25,7 @@ export class UserService {
         }
 
         // return all the users
-        return users;       
+        return users.map(this.removePassword);       
     }
 
     async getUserById(id: number): Promise<User> {
@@ -43,7 +43,45 @@ export class UserService {
         };
 
         // just return our user
-        return user;
+        return this.removePassword(user);
+    }
+
+    async getUserByUniqueKey(queryObj: any): Promise<User> {
+
+        // we need to wrap this up in a try/catch in case errors are thrown for our awaits
+        try {
+            let queryKeys = Object.keys(queryObj);
+
+            // check that the properties belong to the object
+            if(!queryKeys.every(key => isPropertyOf(key, User))) {
+                throw new BadRequestError();
+            }
+
+            // we will only support single param search
+            let key = queryKeys[0];
+            let val = queryObj[key];
+
+            // if they are searching for a user by id, reuse the logic we already have
+            if (key === 'id') {
+                return await this.getUserById(+val);
+            }
+
+            // ensure that the provided key value is valid
+            if(!isValidStrings(val)) {
+                throw new BadRequestError();
+            }
+
+            let user = await this.userRepository.getByUniqueKey(key, val);
+
+            if (isEmptyObject(user)) {
+                throw new ResourceNotFoundError();
+            }
+
+            return this.removePassword(user);
+
+        } catch (e) {
+            throw e;
+        }
     }
 
     async authenticateUser(un: string, pw: string): Promise<User> {
@@ -74,7 +112,7 @@ export class UserService {
     async addNewUser(newUser: User): Promise<User> {
         try {
             // is our input a valid User?
-            if (!isValidObject(newUser, 'username')) {
+            if (!isValidObject(newUser, 'id')) {
                 throw new BadRequestError('Invalid property value found in provided user');
             }
 
@@ -82,7 +120,7 @@ export class UserService {
             const persistedUser = await this.userRepository.addNew(newUser);
 
             // return stored value
-            return persistedUser;
+            return this.removePassword(persistedUser);
         } catch (e) {
             throw e;
         }
