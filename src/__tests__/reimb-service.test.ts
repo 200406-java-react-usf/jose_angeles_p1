@@ -7,7 +7,6 @@ import {
     BadRequestError,
     AuthenticationError,
     ResourcePersistenceError,
-    NotImplementedError
 } from '../errors/errors';
 
 jest.mock('../repos/Reimbursement-repo', () => {
