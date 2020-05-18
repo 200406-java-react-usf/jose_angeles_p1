@@ -162,8 +162,7 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
                                             updatedReimbursement.description, authorId, typeId]);
 
             // return boolean                                 
-            if(rs.rowCount) return true;    
-            return false;
+            return true;
         } catch (e) {
             throw new InternalServerError('Invalid input to update user');
         } finally {
