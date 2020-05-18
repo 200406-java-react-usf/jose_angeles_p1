@@ -105,20 +105,15 @@ export class UserService {
         }
     }
 
-    async deleteUserById(jsonObj: object): Promise<boolean> {
-        // in the next 3 lines we extract the id from the object passed
-        let keys = Object.keys(jsonObj);
-        let val = keys[0];
-        let userId = +jsonObj[val];
-
+    async deleteUserById(id: number): Promise<boolean> {
         try {
             // validate if id is a number
-            if (!isValidId(userId)) {
+            if (!isValidId(id)) {
                 throw new BadRequestError('Invalid id provided');
             }
 
             // call deleteById on user repos and store boolean
-            let deletedUser = await this.userRepository.deleteById(userId);
+            let deletedUser = await this.userRepository.deleteById(id);
 
             // just return the boolean which is most likely true
             return deletedUser;

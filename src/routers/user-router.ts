@@ -73,12 +73,12 @@ UserRouter.put('', adminGuard, async (req, res) => {
 });
 
 // we'll be using this DELETE method to delete an User
-UserRouter.delete('', adminGuard, async (req, res) => {
+UserRouter.delete(':id', adminGuard, async (req, res) => {
     console.log('DELETE REQUEST RECEIVED AT /users');
-    console.log(req.body);
+    const id = +req.params.id;
     try {
         // delete an user 
-        let deletedUser = await UserService.deleteUserById(req.body);
+        let deletedUser = await UserService.deleteUserById(id);
 
         // send status and boolean stored in deletedUser
         res.status(200).json(deletedUser);
