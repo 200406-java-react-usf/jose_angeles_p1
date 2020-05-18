@@ -170,26 +170,26 @@ export class ReimbursementRepository implements CrudRepository<Reimbursement> {
         }
     }
 
-    async getAllMyReimb (username: string): Promise<Reimbursement[]> {
-        let client: PoolClient;
-        try {
-            // make connection to DB
-            client = await connectionPool.connect();
+    // async getAllMyReimb (username: string): Promise<Reimbursement[]> {
+    //     let client: PoolClient;
+    //     try {
+    //         // make connection to DB
+    //         client = await connectionPool.connect();
 
-            // baseQuery to getAllReimb
-            let sql = `${this.baseQuery} where u.username = $1`;
+    //         // baseQuery to getAllReimb
+    //         let sql = `${this.baseQuery} where u.username = $1`;
 
-            // run the query
-            let rs = await client.query(sql,[username]);
+    //         // run the query
+    //         let rs = await client.query(sql,[username]);
 
-            // map all reimb and return them
-            return rs.rows.map(mapReimbursementResultSet);
-        } catch (e) {
-            throw new InternalServerError();
-        } finally {
-            client && client.release();
-        }
-    }
+    //         // map all reimb and return them
+    //         return rs.rows.map(mapReimbursementResultSet);
+    //     } catch (e) {
+    //         throw new InternalServerError();
+    //     } finally {
+    //         client && client.release();
+    //     }
+    // }
 
     async filterReimbType (type: string): Promise<Reimbursement[]> {
         let client: PoolClient;

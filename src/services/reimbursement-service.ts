@@ -87,24 +87,24 @@ export class ReimbursementService {
         }
     }
 
-    async getAllMyReimbursements(username: string): Promise<Reimbursement[]> {
+    // async getAllMyReimbursements(username: string): Promise<Reimbursement[]> {
         
-        // check if string is valid
-        if (!isValidStrings(username)) {
-            throw new BadRequestError('string is not valid');
-        }
+    //     // check if string is valid
+    //     if (!isValidStrings(username)) {
+    //         throw new BadRequestError('string is not valid');
+    //     }
 
-        // call getAllReimb and store the value
-        let reimbursements = await this.reimbursementRepo.getAllMyReimb(username);
+    //     // call getAllReimb and store the value
+    //     let reimbursements = await this.reimbursementRepo.getAllMyReimb(username);
 
-        // check if what we got is empty
-        if (reimbursements.length == 0){
-             throw new ResourceNotFoundError('There aren\'t any reimbursements associated with given username');
-        }
+    //     // check if what we got is empty
+    //     if (reimbursements.length == 0){
+    //          throw new ResourceNotFoundError('There aren\'t any reimbursements associated with given username');
+    //     }
  
-        // return what we got
-        return reimbursements;
-    }
+    //     // return what we got
+    //     return reimbursements;
+    // }
 
     async filterReimbByType(type: string): Promise<Reimbursement[]> {
         // check if string is valid

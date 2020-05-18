@@ -29,16 +29,16 @@ ReimbursementRouter.get('/:id', managerGuard, async (req, res) => {
     }
 });
 
-// GET method to get all reimbs for a specific user 
-ReimbursementRouter.get('/myreimb/:username', async (req, res) => {
-    const username = req.params.username;
-    try {
-        let payload = await ReimbService.getAllMyReimbursements(username);
-        res.status(200).json(payload);
-    } catch (e) {
-        res.status(e.statusCode).json(e);
-    }
-});
+// // GET method to get all reimbs for a specific user 
+// ReimbursementRouter.get('/myreimb/:username', async (req, res) => {
+//     const username = req.params.username;
+//     try {
+//         let payload = await ReimbService.getAllMyReimbursements(username);
+//         res.status(200).json(payload);
+//     } catch (e) {
+//         res.status(e.statusCode).json(e);
+//     }
+// });
 
 //GET method to filter reimbursements by type
 ReimbursementRouter.get('/filtertype/:type', managerGuard, async (req, res) => {
