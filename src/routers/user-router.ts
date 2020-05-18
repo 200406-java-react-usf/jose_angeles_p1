@@ -15,21 +15,12 @@ UserRouter.get('', adminGuard, async (req, res) => {
     console.log('GET ALL USERS AT /users');
     
     try {
+        // getAllUsers and store it
+        let payload = await UserService.getAllUsers();
 
-        let reqURL = url.parse(req.url, true);
-
-        if (!isEmptyObject(reqURL.query)) {
-            let payload = await UserService.getUserByUniqueKey({...reqURL.query});
-            res.status(200).json(payload);
-        } else {
-            // getAllUsers and store it
-            let payload = await UserService.getAllUsers();
-
-            // send the status of payload and the value in json form
-            res.status(200).json(payload);
-        }
-        
-    } catch (e) {        
+        // send the status of payload and the value in json form
+        res.status(200).json(payload);
+        } catch (e) {        
         res.status(e.statusCode).json(e);
     }
 });

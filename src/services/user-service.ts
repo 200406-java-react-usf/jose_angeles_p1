@@ -46,44 +46,6 @@ export class UserService {
         return user;
     }
 
-    async getUserByUniqueKey (queryObj: any): Promise<User> {
-        // we need to wrap this up in a try/catch in case errors are thrown for our awaits
-        try {
-            // return the property names of the given object
-            let queryKeys = Object.keys(queryObj);
-
-            // check if they are a property of user
-            if(!queryKeys.every(key => isPropertyOf(key, User))) {
-                throw new BadRequestError();
-            }
-
-            // we will only support single param searches
-            let key = queryKeys[0];
-            let val = queryObj[key];
-
-            // if they are searching for a user by id, reuse the logic we already have
-            if (key === 'id') {
-                return await this.getUserById(+val);
-            }
-
-            // ensure that the provided key value is valid
-            if(!isValidStrings(val)) {
-                throw new BadRequestError();
-            }
-
-            let user = await this.userRepository.getByUniqueKey(key, val);
-
-            if (isEmptyObject(user)) {
-                throw new ResourceNotFoundError();
-            }
-
-            return this.removePassword(user);
-
-        } catch (e) {
-            throw e;
-        }
-    }
-
     async authenticateUser(un: string, pw: string): Promise<User> {
         try {
             // check to see if the un and pw are strings
