@@ -136,9 +136,8 @@ export class UserRepository implements CrudRepository<User> {
             let rs = await client.query(sql, [user.id, user.username, user.password, 
                                         user.fname, user.lname, user.email, roleId]);
 
-            // return true if query ran properly                                
-            if(rs.rowCount) return true;    
-            return false;
+            // return true                               
+            return true;  
         } catch (e) {
             // throw error if you had invalid input
             throw new InternalServerError('Invalid input to update user');
