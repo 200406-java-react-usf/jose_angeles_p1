@@ -172,6 +172,61 @@ describe('userRepo', () => {
         }
     });
 
+    test('should resolve to a User object when getUserByUniqueKey retrieves a record from data source', async () => {
+        // Arrange
+        expect.hasAssertions();
+
+        let mockUser = new User(1, 'jangeles', 'password', 'jose', 'angeles', 'jangeles@revature.com', 'admin');
+        (mockMapper.mapUserResultSet as jest.Mock).mockReturnValue(mockUser);
+
+        // Act
+        let result = await sut.getByUniqueKey('username', 'jangeles');
+
+        // Assert
+        expect(result).toBeTruthy();
+        expect(result instanceof User).toBe(true);
+    });
+
+    test('should resolve to an empty array when getUserByUniqueKey retrieves a record from data source', async () => {
+        // Arrange
+        expect.hasAssertions();
+        
+        (mockConnect as jest.Mock).mockImplementation(() => {
+            return {
+                query: jest.fn().mockImplementation(() => { return { rows: [] }; }), 
+                release: jest.fn()
+            };
+        });
+
+        // Act
+        let result = await sut.getByUniqueKey('username', 'jangeles');
+
+        // Assert
+        expect(result).toBeTruthy();
+        expect(result instanceof User).toBe(true);
+
+    });
+
+    test('should InternalServerError with no connection', async () => {
+        // Arrange
+        expect.hasAssertions();
+        
+        (mockConnect as jest.Mock).mockImplementation(() => {
+            return {
+                query: jest.fn().mockImplementation(() => { return null; }), 
+                release: jest.fn()
+            };
+        });
+        try{
+        // Act
+        let result = await sut.getByUniqueKey('username', 'jangeles');
+        }
+        catch(e){
+        // Assert
+        expect(e instanceof InternalServerError).toBe(true);
+        }
+    });
+
     test('should resolve to a User object when getUserByCredentials retrieves a record from data source', async () => {
         // Arrange
         expect.hasAssertions();
