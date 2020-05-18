@@ -47,5 +47,6 @@ export default {
     isValidId,
     isValidStrings,
     isValidObject,
-    isPropertyOf
+    isPropertyOf, 
+    isEmptyObject
 };

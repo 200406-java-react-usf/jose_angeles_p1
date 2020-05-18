@@ -169,6 +169,120 @@ describe('userService', () => {
         }
     });
 
+    test('should resolve to User when getUserByUniqueKey is given a valid an known key(username)', async () => {
+        // Arrange
+        expect.assertions(2);
+        Validator.isPropertyOf = jest.fn().mockReturnValue(true);
+        Validator.isValidStrings = jest.fn().mockReturnValue(true);
+        Validator.isEmptyObject = jest.fn().mockReturnValue(false);
+        Validator.isValidId = jest.fn().mockReturnValue(true);
+
+        mockRepo.getByUniqueKey = jest.fn().mockImplementation((key: string, val: string) => {
+            return new Promise<User>((resolve) => {
+                resolve(mockUsers.find(user => user[key] === val));
+            });
+        });
+
+        // Act
+        let query = {
+            username: 'aanderson'
+        }
+        let result = await sut.getUserByUniqueKey(query);
+
+        // Assert
+        expect(result).toBeTruthy();
+        expect(result.username).toBe('aanderson');
+    });
+
+    test('should resolve to User when getUserByUniqueKey is given a valid an known key(id)', async () => {
+        // Arrange
+        expect.assertions(2);
+        Validator.isPropertyOf = jest.fn().mockReturnValue(true);
+        Validator.isValidStrings = jest.fn().mockReturnValue(true);
+        Validator.isEmptyObject = jest.fn().mockReturnValue(false);
+        Validator.isValidId = jest.fn().mockReturnValue(true);
+        mockRepo.getById = jest.fn().mockReturnValue(mockUsers[0]);
+
+        mockRepo.getUserByUniqueKey = jest.fn().mockImplementation((key: string, val: string) => {
+            return new Promise<User>((resolve) => {
+                resolve(mockUsers.find(user => user[key] === val));
+            });
+        });
+
+        // Act
+        let query = {
+            id: 1
+        }
+        let result = await sut.getUserByUniqueKey(query);
+
+        // Assert
+        expect(result).toBeTruthy();
+        expect(result.id).toBe(1);
+    });
+
+    test('should reject with BadRequestError if invalid key when getUserByUniqueKey is called', async () => {
+        // Arrange
+        expect.hasAssertions();
+        mockRepo.getById = jest.fn().mockReturnValue(true);
+
+        // Act
+        let query = {
+            test: 'aanderson'
+        }
+        try {
+            await sut.getUserByUniqueKey(query);
+        } catch (e) {
+
+            // Assert
+            expect(e instanceof BadRequestError).toBe(true);
+        }
+    });
+
+    test('should reject with BadRequestError if repo return false when getUserByUniqueKey is called', async () => {
+        // Arrange
+        expect.hasAssertions();
+        mockRepo.getById = jest.fn().mockReturnValue(false);
+
+        // Act
+        let query = {
+            username: null
+        }
+        try {
+            Validator.isPropertyOf = jest.fn().mockReturnValue(true);
+            Validator.isValidStrings = jest.fn().mockReturnValue(false);
+            Validator.isEmptyObject = jest.fn().mockReturnValue(false);
+            await sut.getUserByUniqueKey(query);
+        } catch (e) {
+            // Assert
+            expect(e instanceof BadRequestError).toBe(true);
+        }
+
+    });
+
+    test('should reject with ResourceNotFoundError if valid key but no result when getUserByUniqueKey is called', async () => {
+        // Arrange
+        expect.hasAssertions();
+        Validator.isPropertyOf = jest.fn().mockReturnValue(true);
+        Validator.isValidStrings = jest.fn().mockReturnValue(true);
+        Validator.isEmptyObject = jest.fn().mockReturnValue({});
+        mockRepo.getByUniqueKey = jest.fn().mockImplementation(() => {
+            return new Promise<User>((resolve) => {
+                resolve({} as User);
+            });
+        });
+        // Act
+        let query = {
+            username: 'abcde'
+        }
+        try {
+            await sut.getUserByUniqueKey(query);
+        } catch (e) {
+
+            // Assert
+            expect(e instanceof ResourceNotFoundError).toBe(true);
+        }
+    });
+
     test('should resolve to User when authenticateUser is given a valid un, pw', async () => {
         // Arrange
         expect.assertions(2);
@@ -262,11 +376,12 @@ describe('userService', () => {
 
         Validator.isValidId = jest.fn().mockReturnValue(true);
         Validator.isValidObject = jest.fn().mockReturnValue(true);
+        mockRepo.getUserByUniqueKey =  jest.fn().mockReturnValue(false);
         mockRepo.addNew =  jest.fn().mockReturnValue(mockUsers[5]);
 
         // Act
         try {
-            let newUser = new User(6, 'test', 'password', 'test', 'test', 'test@revature.com', 'User');
+            let newUser = new User(6, 'test', 'password', 'test', 'test', 'test@revature.com', 'User')
             await sut.addNewUser(newUser);
 
         } catch (e) {
@@ -281,12 +396,13 @@ describe('userService', () => {
 
         Validator.isValidId = jest.fn().mockReturnValue(true);
         Validator.isValidObject = jest.fn().mockReturnValue(true);
+        mockRepo.getUserByUniqueKey =  jest.fn().mockReturnValue(false);
         mockRepo.addNew = jest.fn().mockReturnValue(mockUsers[5]);
 
         // Act
         try {
 
-            let newUser = new User(6, 'test', 'password', 'test', 'test', 'test@revature.com', 'Admin')
+            let newUser = new User(6, 'test', 'password', 'test', 'test', 'test@revature.com', 'User')
             await sut.addNewUser(newUser);
 
         } catch (e) {
@@ -327,15 +443,18 @@ describe('userService', () => {
         }
     });
 
-    test('should return true to User when deleteById', async () => {
+    test('should return false to having an error when deleteById is called', async () => {
         // Arrange
         expect.hasAssertions();
 
         // Act
-        let result = await sut.deleteUserById(1);
+        try {
+            await sut.deleteUserById(1);
 
-        
-        // Assert
-        expect(result).toBeTruthy();                   
+        } catch (e) {
+            // Assert
+            expect(e instanceof NotImplementedError).toBe(false);
+            
+        }
     });
 });

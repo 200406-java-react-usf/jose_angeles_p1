@@ -116,13 +116,25 @@ export class UserService {
                 throw new BadRequestError('Invalid property value found in provided user');
             }
 
-            // run addNew from user repo and store that value
+            let usernameAvailable = await this.isUsernameAvailable(newUser.username);
+
+            if (!usernameAvailable) {
+                throw new ResourcePersistenceError();
+            }
+        
+            let emailAvailable = await this.isEmailAvailable(newUser.email);
+    
+            if (!emailAvailable) {
+                throw new  ResourcePersistenceError();
+            }
+
+            newUser.role = 'User'; // all new registers have 'User' role by default
             const persistedUser = await this.userRepository.addNew(newUser);
 
-            // return stored value
             return this.removePassword(persistedUser);
+
         } catch (e) {
-            throw e;
+            throw e
         }
     }
 
@@ -169,5 +181,23 @@ export class UserService {
         let usr = {...user};
         delete usr.password;
         return usr;   
+    }
+
+    private async isUsernameAvailable(username: string): Promise<boolean> {
+        try {
+            await this.getUserByUniqueKey({'username': username});
+        } catch (e) {
+            return true;
+        }
+        return false;
+    }
+
+    private async isEmailAvailable(email: string): Promise<boolean> {      
+        try {
+            await this.getUserByUniqueKey({'email': email});
+        } catch (e) {
+            return true;
+        }
+        return false;
     }
 }
