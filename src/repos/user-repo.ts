@@ -1,7 +1,7 @@
 import {User} from '../models/user';
 import {CrudRepository} from './crud-repo';
 import {InternalServerError} from '../errors/errors';
-import {PoolClient} from 'pg';
+import {PoolClient, Pool} from 'pg';
 import {connectionPool} from '..';
 import {mapUserResultSet} from '../util/result-set-mapper';
 
@@ -53,6 +53,41 @@ export class UserRepository implements CrudRepository<User> {
             let rs = await client.query(sql, [id]);
 
             // This time we map only one user
+            return mapUserResultSet(rs.rows[0]);
+        } catch (e) {
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+    }
+
+    async getByUniqueKey(key: string, val: string) {
+        let client: PoolClient;
+
+        try {
+            // connect to db 
+            client = await connectionPool.connect();
+
+            // query
+            let sql = `${this.baseQuery} where u.${key} = $1`;
+
+            // run query
+            let rs = await client.query(sql, [val]);
+            return mapUserResultSet(rs.rows[0]);
+        } catch (e) {
+            throw new InternalServerError();
+        } finally {
+            client && client.release();
+        }
+    }
+
+    async getUserByCredentials(un: string, pw: string) {
+        let client: PoolClient;
+
+        try {
+            client = await connectionPool.connect();
+            let sql = `${this.baseQuery} where u.username = $1 and u.password = $2`;
+            let rs = await client.query(sql, [un, pw]);
             return mapUserResultSet(rs.rows[0]);
         } catch (e) {
             throw new InternalServerError();
@@ -121,9 +156,8 @@ export class UserRepository implements CrudRepository<User> {
             let rs = await client.query(sql, [user.id, user.username, user.password, 
                                         user.fname, user.lname, user.email, roleId]);
 
-            // return true if query ran properly                                
-            if(rs.rowCount) return true;    
-            return false;
+            // return true                               
+            return true;  
         } catch (e) {
             // throw error if you had invalid input
             throw new InternalServerError('Invalid input to update user');

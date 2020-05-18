@@ -1,8 +1,12 @@
 import dotenv from 'dotenv';
 import express from 'express';
+import morgan from 'morgan';
 
 import { UserRouter } from './routers/user-router';
 import { ReimbursementRouter } from './routers/reimbursement-router';
+import { AuthRouter } from './routers/auth-router';
+import { sessionMiddleware } from './middleware/session-middleware';
+import { corsFilter } from './middleware/cors-filter';
 import {Pool} from 'pg';
 
 // environment configuration
@@ -20,9 +24,12 @@ export const connectionPool: Pool = new Pool ({
 
 // Web configuration
 const app = express();
+app.use(sessionMiddleware);
+app.use(corsFilter);
 app.use('/', express.json());
 app.use('/users', UserRouter);
 app.use('/reimbursements', ReimbursementRouter);
+app.use('/auth', AuthRouter);
 
 app.listen(8080, () => {
     console.log('Project1 running and listening at http://localhost:8080');

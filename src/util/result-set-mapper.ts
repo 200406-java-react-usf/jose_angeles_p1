@@ -2,7 +2,9 @@ import {UserSchema, ReimbursementSchema} from './schemas';
 import {User} from '../models/user';
 import {Reimbursement} from '../models/reimbursement';
 
+// make a function to map the resultSet of user-repo we get from the DB
 export function mapUserResultSet(resultSet: UserSchema): User {
+    // if resultSet is falsy, show empty objects as User
     if (!resultSet) {
         return {} as User;
     };
@@ -18,7 +20,9 @@ export function mapUserResultSet(resultSet: UserSchema): User {
     );
 };
 
+// make a function to map the resultSet of reimbursement-repo we get from DB
 export function mapReimbursementResultSet (resultSet: ReimbursementSchema): Reimbursement {
+    // if resultSet is falsy, show empty objects as Reimbursement
     if (!resultSet) {
         return {} as Reimbursement;
     }

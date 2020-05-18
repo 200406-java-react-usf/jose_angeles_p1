@@ -1,11 +1,14 @@
+// validate the id to make sure is a number
 export const isValidId = (id: number): boolean => {
     return !!(id && typeof id === 'number' && Number.isInteger(id) && id > 0);
 };
 
+// validate the strings 
 export const isValidStrings = (...strs: string[]): boolean => {
     return (strs.filter(str => !str || typeof str !== 'string').length == 0);
 };
 
+// validate the object being passed
 export const isValidObject = (obj: Object, ...nullableProps: string[]) => {
     return obj && Object.keys(obj).every(key => {
         if (nullableProps.includes(key)) return true;
@@ -13,6 +16,7 @@ export const isValidObject = (obj: Object, ...nullableProps: string[]) => {
     });
 };
 
+// check if the property being passed belongs to the object
 export const isPropertyOf = (prop: string, type: any) => {
 
     if (!prop || !type) {
@@ -34,6 +38,7 @@ export const isPropertyOf = (prop: string, type: any) => {
 
 }
 
+// is the object empty?
 export function isEmptyObject<T>(obj: T) {
     return obj && Object.keys(obj).length === 0;
 }
@@ -42,5 +47,6 @@ export default {
     isValidId,
     isValidStrings,
     isValidObject,
-    isPropertyOf
+    isPropertyOf, 
+    isEmptyObject
 };

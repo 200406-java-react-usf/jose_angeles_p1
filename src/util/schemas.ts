@@ -1,3 +1,4 @@
+// schema for User
 export interface UserSchema {
     ers_user_id: number;
     username: string;
@@ -8,6 +9,7 @@ export interface UserSchema {
     role: string;
 }
 
+// schema for Reimbursements
 export interface ReimbursementSchema {
     reimb_id: number,
     amount: number;
@@ -15,7 +17,7 @@ export interface ReimbursementSchema {
     resolved: Date;
     description: string;
     author: string;
-    resolver: string;
+    resolver: number;
     status: string;
     type: string;
 }
