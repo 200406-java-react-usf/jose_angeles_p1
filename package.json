@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/200406-java-react-usf/jose_angeles_p1-API#readme",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-session": "^1.17.1",
     "pg": "^8.0.3",
     "dotenv": "^8.2.0"
